@@ -3,7 +3,7 @@
 {%block content%}
 
 <div class="col-md-6 offset-md-3">
-  {% if user.isauthenticated %}
+{% if user.isauthenticated %}
 
 <h1> HELLO </h1>
 {% else %}
@@ -19,7 +19,7 @@
         <div class="mb-3">
           <input type="password" class="form-control" name="password", placeholder="Password" required>
         </div>
-        <button type="submit" class="btn btn-secondary">Login</button>
+        <button type="submit" class="btn btn-secondary" href="{% url 'landing' %}">Login</button>
       </form>
 </form>
 

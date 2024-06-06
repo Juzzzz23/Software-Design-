@@ -13,7 +13,7 @@ def home(request):
         if user is not None:
             login(request, user)
             messages.success(request, "Successfully Logged In")
-            return redirect('home')
+            return redirect('landing')
         else:
             messages.success(request, "Error Logging In, Please Try Again")
             return redirect('home')
@@ -32,7 +32,7 @@ def register_user(request):
             form.save()
             # Authenticate and Login
             username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.success(request, "You Have Successfully Registered!")
@@ -41,4 +41,12 @@ def register_user(request):
         form = SignUpForm()
         return render(request, 'register.html', {'form':form})
     return render(request, 'register.html', {'form':form})
+
+def landing(request):
+    return render(request, 'landing.html', {})
     
+def welcome(request):
+    if request.user.is_authenticated:
+        return render(request, 'welcome.html', {})
+    else:
+        return redirect('home')

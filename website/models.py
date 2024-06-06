@@ -1,3 +1,4 @@
 from django.db import models
 
-# Create your models here.
+#GAWA NG FIELDS OR TABLES 
+#class Table(models.Model):
