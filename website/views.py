@@ -15,7 +15,7 @@ def home(request):
             messages.success(request, "Successfully Logged In")
             return redirect('landing')
         else:
-            messages.success(request, "Error Logging In, Please Try Again")
+            messages.success(request, "Incorrect Username or Password")
             return redirect('home')
     else:
         return render(request, 'home.html', {})
@@ -43,7 +43,11 @@ def register_user(request):
     return render(request, 'register.html', {'form':form})
 
 def landing(request):
-    return render(request, 'landing.html', {})
+    if request.user.is_authenticated:
+        return render(request, 'landing.html', {})
+    else:
+        return redirect('home')
+
     
 def welcome(request):
     if request.user.is_authenticated:

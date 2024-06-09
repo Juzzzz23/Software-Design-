@@ -2,7 +2,9 @@
 
 {%block content%}
 
-<h1> WELCOME </h1>
+    {% if user.username %}
+    <h1> WELCOME, {{user.username}} </h1>
+    {% endif %}
 
 {% endblock %}
 
