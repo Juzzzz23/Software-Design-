@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="{% static 'planner.css'%}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customized Todo Planner</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css
+">
+<style>
+
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+    input[type="text"], input[type="date"], input[type="time"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    button {
+        padding: 10px 260px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+    }
+    li:last-child {
+        margin-bottom: 0;
+    }
+    input[type="checkbox"] {
+        margin-right: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome {{user.username}} to your Planner</h1>
+    <label for="plannerName">Planner Name:</label>
+    <input type="text" id="plannerName" placeholder="Enter planner name">
+    <input type="text" id="taskInput" placeholder="Enter task">
+    <input type="date" id="dueDate" placeholder="Select due date">
+    <input type="time" id="dueTime" placeholder="Select due time">
+    <button onclick="addTask()">Add Task</button>
+    <div class="btn-container">
+        <a href="{% url 'home' %}" class="btn btn-secondary">Go Back</a>
+    </div>
+    <ul id="taskList">
+        <!-- Tasks will be dynamically added here -->
+    </ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr
+"></script>
+<script>
+    flatpickr("#dueDate", {
+        dateFormat: "Y-m-d"
+    });
+
+    function addTask() {
+        var plannerName = document.getElementById("plannerName").value;
+        var taskInput = document.getElementById("taskInput").value;
+        var dueDate = document.getElementById("dueDate").value;
+        var dueTime = document.getElementById("dueTime").value;
+        var taskList = document.getElementById("taskList");
+
+        if (taskInput.trim() !== "" && dueDate.trim() !== "" && dueTime.trim() !== "") {
+            var li = document.createElement("li");
+            var checkbox = document.createElement("input");
+            var removeButton = document.createElement("button");
+
+            checkbox.type = "checkbox";
+            checkbox.onclick = function() {
+                if (this.checked) {
+                    li.style.textDecoration = "line-through";
+                } else {
+                    li.style.textDecoration = "none";
+                }
+            };
+
+            removeButton.textContent = "Remove";
+            removeButton.onclick = function() {
+                li.remove();
+            };
+
+            li.appendChild(checkbox);
+            li.appendChild(document.createTextNode(taskInput + " - Due Date: " + dueDate + " " +"Due Time"+ dueTime + " "));
+            li.appendChild(removeButton);
+            taskList.appendChild(li);
+
+            document.getElementById("plannerName").value = plannerName;
+            document.getElementById("taskInput").value = "";
+            document.getElementById("dueDate").value = "";
+            document.getElementById("dueTime").value = "";
+        } else {
+            alert("Please enter both a task, select a due date, and select a due time.");
+        }
+    }
+    
+</script>
+
+</body>
+</html>
