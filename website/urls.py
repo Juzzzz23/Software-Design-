@@ -8,5 +8,7 @@ urlpatterns = [
     path('landing/<str:username>/', views.landing, name='landing'),
     path('welcome/<str:username>/', views.welcome, name='welcome'),
     path('planner/', views.planner, name='planner'),
+    path('profile/', views.profile_view, name='profile'),
+    path('profile/update/', views.update_profile, name='update_profile')
 
 ]

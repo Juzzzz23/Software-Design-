@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SignUpForm 
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from .forms import UpdateProfileForm
+from django.shortcuts import render
 
 def home(request):
     # Check to see if logging in
@@ -55,6 +58,25 @@ def welcome(request, username):
         return render(request, 'welcome.html', {'username':username})
     else:
         return redirect('home')
+    
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = UpdateProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile was successfully updated!")
+            return redirect('landing', username=request.user.username)
+    else:
+        form = UpdateProfileForm(instance=request.user)
+    
+    return render(request, 'update_profile.html', {'form': form})
+
+def profile_view(request):
+    return render(request, 'profile.html')
+
+
     
 def planner(request):
     return render(request, 'planner.html')
