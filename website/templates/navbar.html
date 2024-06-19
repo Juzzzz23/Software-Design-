@@ -10,6 +10,7 @@
               Dropdown
             </a>
             <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'update_profile' %}">Update Profile</a>
               <li><a class="dropdown-item" href="{% url 'planner' %}">Plan Now</a></li>
               <li><a class="dropdown-item" href="#">Another action</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -32,8 +33,4 @@
       </div>
     </div>
   </nav>
-
-  <li class="nave-item">
-    <a class="nave-link" href="{% url 'update_profile' %}">Update Profile</a>"
-  </li>
   {% endif %}
