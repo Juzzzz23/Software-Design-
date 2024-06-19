@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm 
+from .forms import SignUpForm, PlanForm
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .forms import UpdateProfileForm
-from django.shortcuts import render
+from django import forms
+from .models import Plan
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
 
 def home(request):
     # Check to see if logging in
@@ -29,6 +32,8 @@ def logout_user(request):
     messages.success(request, "You Have Been Logged Out")
     return redirect('home')
 
+#Registration Form
+
 def register_user(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -48,6 +53,7 @@ def register_user(request):
 
 def landing(request, username):
     if request.user.is_authenticated and request.user.username == username:
+        plans = Plan.objects.filter(user=request.user)
         return render(request, 'landing.html', {'username':username})
     else:
         return redirect('home')
@@ -59,6 +65,7 @@ def welcome(request, username):
     else:
         return redirect('home')
     
+#Update Profile page
 
 @login_required
 def update_profile(request):
@@ -76,7 +83,69 @@ def update_profile(request):
 def profile_view(request):
     return render(request, 'profile.html')
 
+#For planner
 
+class PlanForm(forms.ModelForm):
+    class Meta:
+        model = Plan
+        fields = ['task', 'due_date', 'due_time']
+
+@login_required    
+def planner(request):
+    if request.method == 'POST':
+        form = PlanForm(request.POST)
+        if form.is_valid():
+            plan = form.save(commit=False)
+            plan.user = request.user
+            plan.save()
+            return redirect('landing', username=request.user.username)
+    else:
+        form = PlanForm()
+    return render(request, 'planner.html', {'form': form})
+
+def landing(request, username):
+    if request.user.is_authenticated and request.user.username == username:
+        plans = Plan.objects.filter(user=request.user)
+        return render(request, 'landing.html', {'username': username, 'plans': plans})
+    else:
+        return redirect('home')    
     
 def planner(request):
     return render(request, 'planner.html')
+
+@require_POST
+@login_required
+def complete_plan(request, plan_id):
+    try:
+        plan = Plan.objects.get(id=plan_id, user=request.user)
+        plan.completed = True
+        plan.save()
+        messages.success(request, "Plan marked as completed!")
+    except Plan.DoesNotExist:
+        messages.error(request, "Plan does not exist.")
+    return redirect('landing', username=request.user.username)
+
+@login_required
+def complete_plan(request, plan_id):
+    plan = get_object_or_404(Plan, id=plan_id, user=request.user)
+    plan.completed = True
+    plan.save()
+    return redirect('landing', username=request.user.username)
+
+def landing(request,username):
+    user = request.user
+    plans = Plan.objects.filter(user=user)
+    return render(request, 'landing.html', {'username': username, 'plans': plans})
+
+
+def planner_view(request):
+    if request.method == 'POST':
+        form = PlanForm(request.Post)
+        if form.is_valid():
+            plan = form.save(commit=False)
+            plan.user = request.user
+            plan.save()
+            return redirect('landing', username=request.user.username)
+    else:
+        form = PlanForm()
+    return render(request, 'planner.html', {'form': form})

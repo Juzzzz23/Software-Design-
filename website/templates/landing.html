@@ -1,19 +1,35 @@
 {% extends 'base.html' %}
 
-{%block content%}
+{% block content %}
     {% load static %}
     {% if user.username %}
-    <h1> WELCOME, {{user.username}} </h1>
-    <html lang="en" dir="ltr">
-    <link rel="stylesheet" href="{% static 'landing.css'%}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
-  <div class="img"></div>
-  <div class="center">
-    <div class="title">Create Amazing Website</div>
-    <div class="sub_title">Pure HTML & CSS Only</div>
-  </div>
-</body>
-</html>
+        <h1>WELCOME, {{ user.username }}</h1>
+        <html lang="en" dir="ltr">
+            <link rel="stylesheet" href="{% static 'landing.css' %}">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+            <div class="img"></div>
+            <div class="center">
+                <div class="title">Create Amazing Website</div>
+                <div class="sub_title">Pure HTML & CSS Only</div>
+            </div>
+
+            <h2>Your Plans</h2>
+            <ul>
+                {% for plan in plans %}
+                    <li>
+                        {{ plan.task }} - Due Date: {{ plan.due_date }} {{ plan.due_time }}
+                        {% if not plan.completed %}
+                            <form action="{% url 'complete_plan' plan.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit">Mark as Completed</button>
+                            </form>
+                        {% else %}
+                            <span>(Completed)</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </html>
     {% endif %}
 {% endblock %}
 
